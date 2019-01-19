@@ -1,28 +1,49 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import Card  from './components/Card/Card';
 import './App.css';
 
-class App extends Component {
+export class App extends Component {
+  state = {
+    data: [],
+    audio: "",
+  }
+  
+  componentDidMount() {
+    fetch("https://fbdev.khmercoders.co/music.json")
+    .then(res => res.json())
+    .then(data => {
+      this.setState({data});
+    })
+    .catch(err => console.log(err));
+  }
+
   render() {
+    const playlists = this.state.data.map(playlist => {
+      return (<Card
+        key={playlist.title}
+        title={playlist.title}
+        image={playlist.image}
+        onPlay={() => {
+          this.setState({audio: playlist.path})
+        }}
+      />)
+    })
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className="container">
+          <div className="text-center">
+              <h1>Playlist</h1>
+          </div>
+          <audio src={this.state.audio} controls autoPlay />
+        <div className="playlists">
+ 
+          {playlists}
+        </div>
       </div>
-    );
+    )
   }
 }
 
 export default App;
+
+
